@@ -1,0 +1,36 @@
+name: 'Plenary Busted'
+description: 'Run tests using plenary.nvim'
+inputs:
+  init:
+    description: 'Path to init file'
+    required: false
+    default: ''
+  specs:
+    description: 'Path to specs dir'
+    required: false
+    default: 'specs'
+  neovim-version:
+    description: 'Neovim version'
+    required: false
+    default: 'nightly'
+runs:
+  using: "composite"
+  steps:
+    - uses: rhysd/action-setup-vim@v1
+      with:
+        neovim: true
+        version: "${{ inputs.neovim-version }}"
+
+    - name: Version
+      shell: bash
+      run: |
+        nvim --version
+
+
+    - name: Run tests
+      shell: bash
+      run: ${{ github.action_path }}/run/test.sh
+      env:
+        INIT_FILE: "${{ inputs.init }}"
+        SPECS_DIR: "${{ inputs.specs }}"
+
