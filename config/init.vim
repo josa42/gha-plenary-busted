@@ -1,4 +1,4 @@
-set rtp+=.
+set rtp+=$PWD
 set rtp+=$PLENARY_DIR
 
 runtime plugin/plenary.vim
@@ -12,4 +12,4 @@ if $INIT_FILE =~ ".vim$"
 endif
 
 lua require('plenary.busted')
-  
+

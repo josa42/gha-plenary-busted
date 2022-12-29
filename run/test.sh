@@ -21,6 +21,6 @@ fi
 nvim \
   --headless \
   --noplugin \
-  -u ${ROOT_DIR}/config/init.vim \
+  -u "${ROOT_DIR}/config/init.vim" \
   -c "PlenaryBustedDirectory ${SPECS_DIR:-specs} { minimal_init = '${ROOT_DIR}/config/init.vim' }"
 
