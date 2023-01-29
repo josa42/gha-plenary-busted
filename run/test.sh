@@ -11,7 +11,7 @@ fi
 
 if [[ "$VENDOR_DIR" == "" ]]; then
   VENDOR_DIR=$(mktemp -d)
-  function cleanup {
+  cleanup() {
     rm -rf "$VENDOR_DIR"
   }
   trap cleanup EXIT

@@ -1,8 +1,18 @@
-local pwd = os.getenv('PWD')
-local vendor_dir = os.getenv('VENDOR_DIR')
-local init_file = os.getenv('INIT_FILE')
+local run = function()
+  local pwd = os.getenv('PWD')
+  local init_file = os.getenv('INIT_FILE')
+
+  vim.opt.runtimepath:prepend(pwd)
+
+  install_plug('https://github.com/nvim-lua/plenary.nvim.git')
+
+  if init_file ~= '' then
+    vim.cmd.source(init_file)
+  end
+end
 
 _G.install_plug = function(repo)
+  local vendor_dir = os.getenv('VENDOR_DIR')
   local name = repo:gsub('^.*/', '')
 
   local dir = vendor_dir .. '/' .. name
@@ -12,19 +22,19 @@ _G.install_plug = function(repo)
 
   vim.opt.runtimepath:prepend(dir)
 
-  if vim.loop.fs_stat(dir .. '/plugin') then
-    for _, f in ipairs(vim.fn.readdir(dir .. '/plugin')) do
+  local dir_plugin = dir .. '/plugin'
+
+  if vim.loop.fs_stat(dir_plugin) then
+    local files = vim.fn.readdir(dir_plugin, function(f)
+      if f:match('%.lua$') or f:match('%.vim$') then
+        return 1
+      end
+    end)
+
+    for _, f in ipairs(files) do
       vim.cmd.runtime(('plugin/%s'):format(f))
     end
   end
 end
 
-vim.opt.runtimepath:prepend(pwd)
-
-install_plug('https://github.com/nvim-lua/plenary.nvim.git')
-
-if init_file ~= '' then
-  vim.cmd.source(init_file)
-end
-
-require('plenary.busted')
+run()
