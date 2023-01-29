@@ -3,6 +3,11 @@
 set -e
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SPECS_DIR="${SPECS_DIR:-specs}"
+
+if [[ "$INIT_FILE" == "" ]] && [[ -f "$SPECS_DIR/init.lua" ]]; then
+  export INIT_FILE="$SPECS_DIR/init.lua"
+fi
 
 if [[ "$VENDOR_DIR" == "" ]]; then
   VENDOR_DIR=$(mktemp -d)
@@ -12,15 +17,12 @@ if [[ "$VENDOR_DIR" == "" ]]; then
   trap cleanup EXIT
 fi
 
+export VENDOR_DIR="$VENDOR_DIR"
 export PLENARY_DIR="$VENDOR_DIR/plenary.nvim.git"
-
-if ! [[ -d "$PLENARY_DIR" ]]; then
-  git clone https://github.com/nvim-lua/plenary.nvim.git $PLENARY_DIR 2> /dev/null
-fi
 
 nvim \
   --headless \
   --noplugin \
-  -u "${ROOT_DIR}/config/init.vim" \
-  -c "PlenaryBustedDirectory ${SPECS_DIR:-specs} { minimal_init = '${ROOT_DIR}/config/init.vim' }"
+  -u "${ROOT_DIR}/config/init.lua" \
+  -c "PlenaryBustedDirectory ${SPECS_DIR} { minimal_init = '${ROOT_DIR}/config/init.lua' }"
 
